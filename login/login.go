@@ -80,6 +80,13 @@ func (lu loginUser) LoginUser(rw http.ResponseWriter, r *http.Request) {
 		rw.Write([]byte(errorString))
 	}
 
+	_, err = lu.dbClient.VerifyUser(ctx, true, userDetails.UserName)
+	if err != nil {
+		errorString = fmt.Sprintf("Error while login user %s, please try again !", loginRequest.UserName)
+		rw.WriteHeader(500)
+		rw.Write([]byte(errorString))
+	}
+
 	rw.WriteHeader(200)
 	rw.Write(resByte)
 

@@ -5,6 +5,7 @@ import (
 	"LoginUser/models"
 	"context"
 	"database/sql"
+	"log"
 	"math/rand"
 )
 
@@ -54,6 +55,16 @@ func (dc DbClient) GetUserDetails(ctx context.Context, userName string) (models.
 	}
 
 	return userData, nil
+}
+
+func (dc DbClient) VerifyUser(ctx context.Context, isVerified bool, userName string) (int64, error) {
+	result, err := dc.db.Exec("UPDATE users SET is_verified = ? WHERE user_name = ?", isVerified, userName)
+	if err != nil {
+		log.Fatal("Error while updating users database")
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 func NewDbClient(db *sql.DB, appConfig config.AppConfig) Repository {
